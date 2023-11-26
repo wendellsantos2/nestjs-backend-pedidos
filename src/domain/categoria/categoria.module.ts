@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Categoria } from '../../entities/categoria.entity';  // Importando a entidade Categoria
 import { CategoriaService } from './categoria.service';
 import { CategoriaController } from './categoria.controller';  // Assumindo que você tem um controller para Categoria
+ 
 
 @Module({
   imports: [

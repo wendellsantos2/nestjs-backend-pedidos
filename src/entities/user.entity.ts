@@ -13,7 +13,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   name: string;
 
   @Column({ nullable: false, unique: true })
@@ -26,9 +26,7 @@ export class User {
 
   @Column({ nullable: false })
   password: string;
-
  
-
   @BeforeInsert()
   async hashPasword() {
     this.password = await bcrypt.hash(this.password, 10);

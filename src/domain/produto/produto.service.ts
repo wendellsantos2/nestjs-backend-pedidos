@@ -5,25 +5,30 @@ import { Produto } from '../../entities/produto.entity';
 
 @Injectable()
 export class ProdutoService {
-  findOne(id: string): Produto | PromiseLike<Produto> {
-      throw new Error('Method not implemented.');
-  }
-  create(produto: Produto): Produto | PromiseLike<Produto> {
-      throw new Error('Method not implemented.');
-  }
-  update(id: string, produto: Produto) {
-      throw new Error('Method not implemented.');
-  }
-  remove(id: string) {
-      throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(Produto)
     private produtoRepository: Repository<Produto>,
   ) {}
 
-  findAll(): Promise<Produto[]> {
+  async findAll(): Promise<Produto[]> {
     return this.produtoRepository.find();
+  }
+
+  async findOne(id: string): Promise<Produto> {
+    return this.produtoRepository.findOne(id as any);
+  }
+
+  async create(produto: Produto): Promise<Produto> {
+    return this.produtoRepository.save(produto);
+  }
+
+  async update(id: string, produtoData: Partial<Produto>): Promise<Produto> {
+    await this.produtoRepository.update(id, produtoData);
+    return this.produtoRepository.findOne(id as any);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.produtoRepository.delete(id);
   }
 
   // Add more methods as needed

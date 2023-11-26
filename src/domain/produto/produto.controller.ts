@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { Produto } from '../../entities/produto.entity';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Produtos') // Adicione a tag para a controladora AuthController
 @Controller('produtos')
 export class ProdutoController {
     constructor(private readonly produtoService: ProdutoService) {}

@@ -21,7 +21,6 @@ import { RolesModule } from './domain/roles/roles.module';
 @Module({
   imports: [UserModule,  CategoriaModule,
     ProdutoModule,
-   
     RolesModule,
     PedidoModule,
     PagamentoModule,

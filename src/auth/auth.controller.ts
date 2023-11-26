@@ -17,16 +17,22 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiOperation({ summary: 'Fazer login' }) // Descrição da rota
-  @ApiBody({ type: CreateUserDto }) // Corpo da solicitação
+  @ApiOperation({ summary: 'Fazer login' })
+  @ApiBody({ 
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'email@example.com' },
+        password: { type: 'string', example: 'yourPassword' }
+      }
+    }
+  })
   @ApiResponse({ status: 200, description: 'Usuário logado com sucesso' })
   async login(@Request() req) {
     return await this.authService.login(req.user);
   }
 
-  @Post('register')
-  @ApiOperation({ summary: 'Registrar um novo usuário' }) // Descrição da rota
-  @ApiBody({ type: CreateUserDto }) // Corpo da solicitação
+
   @ApiResponse({ status: 201, description: 'Usuário registrado com sucesso' })
   async registerUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
@@ -34,9 +40,17 @@ export class AuthController {
 
   @UseGuards(RefreshJwtGuard)
   @Post('refresh')
-  @ApiOperation({ summary: 'Atualizar token de acesso' }) // Descrição da rota
+  @ApiOperation({ summary: 'Atualizar token de acesso' })
   @ApiResponse({ status: 200, description: 'Token de acesso atualizado com sucesso' })
-  async refrshToken(@Request() req) {
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: { type: 'string', example: 'yourRefreshToken' }
+      }
+    }
+  })
+  async refreshToken(@Request() req) {
     return this.authService.refreshToken(req.user);
   }
 }
