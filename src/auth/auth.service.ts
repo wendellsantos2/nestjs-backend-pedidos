@@ -12,8 +12,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string) {
-    const user = await this.userService.findOneWithUserName(username);
+  async validateUser(cpf: string, password: string) {
+    const user = await this.userService.findOneWithUserName(cpf);
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
@@ -24,7 +24,7 @@ export class AuthService {
   async login(user: User) {
     const payload = {
       sub: {
-        username: user.email,
+        cpf: user.cpf,
         name: user.name,
         role: user.role
       },
@@ -39,7 +39,7 @@ export class AuthService {
 
   async refreshToken(user: User) {
     const payload = {
-      username: user.email,
+      cpf: user.cpf,
       sub: {
         name: user.name,
       },

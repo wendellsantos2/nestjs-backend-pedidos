@@ -5,7 +5,26 @@ import { UserService } from 'src/domain/user/user.service';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshJwtGuard } from './guards/refresh-jwt-auth.guard';
-import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
+ 
+
+export class CreateUserDTO {
+  readonly name: string;
+  readonly cpfCnpj: string;
+  readonly email: string;
+  readonly phone: string;
+  readonly address: string;
+  readonly addressNumber: string;
+  readonly province: string;
+  readonly postalCode: string;
+  readonly mobilePhone: string;
+  readonly complement: string;
+  readonly externalReference: string;
+  readonly notificationDisabled: boolean;
+  readonly additionalEmails: string;
+  readonly stateInscription: string;
+  readonly municipalInscription: string;
+  readonly observations: string;
+}
 
 @ApiTags('auth') // Adicione a tag para a controladora AuthController
 @Controller('auth')
@@ -22,7 +41,7 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        email: { type: 'string', example: 'email@example.com' },
+        username: { type: 'string', example: "283.252.254-79" },
         password: { type: 'string', example: 'yourPassword' }
       }
     }
