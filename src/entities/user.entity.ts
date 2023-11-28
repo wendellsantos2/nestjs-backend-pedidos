@@ -21,7 +21,10 @@ export class User {
 
   @Column({ nullable: false, unique: true })
   cpf: string;
-  
+
+  @Column({ nullable: false, unique: true })
+  idClienteAsaas: string;
+ 
   @Column({ nullable: false })
   role: string;   
 

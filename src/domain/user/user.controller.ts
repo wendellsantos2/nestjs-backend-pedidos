@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/createUserDto';
 import { UserService } from './user.service';
@@ -7,19 +7,7 @@ export class CreateUserDTO {
   readonly name: string;
   readonly cpfCnpj: string;
   readonly email: string;
-  readonly phone: string;
-  readonly address: string;
-  readonly addressNumber: string;
-  readonly province: string;
-  readonly postalCode: string;
-  readonly mobilePhone: string;
-  readonly complement: string;
-  readonly externalReference: string;
-  readonly notificationDisabled: boolean;
-  readonly additionalEmails: string;
-  readonly stateInscription: string;
-  readonly municipalInscription: string;
-  readonly observations: string;
+
 }
 
 @ApiTags('User') // Tag Swagger para UserController
@@ -29,7 +17,23 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
-  
+  @ApiBody({
+    description: 'Dados para a criação de um novo usuário',
+    type: CreateUserDto,
+    examples: {
+      normalUser: {
+        summary: 'Exemplo de usuário normal',
+        value: {
+          name: 'John Doe',
+          email: 'email@teste.com',
+          cpf: '283.252.254-79',
+         
+        } 
+      },
+    }
+  })
+  @ApiResponse({ status: 201, description: 'Usuário criado com sucesso.' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos. Por favor, verifique os dados fornecidos.' })
   @Post('create-client')
   async createCliente(@Body() createUserDTO: CreateUserDTO) {
 
@@ -41,16 +45,34 @@ export class UserController {
     }
 }
 
+@Get()
+async findAll(@Res() response) {
+  try {
+    const users = await this.userService.findAll();
+    return response.status(HttpStatus.OK).json(users);
+  } catch (e) {
+    return response.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
+  }
+}
+
+
   @Get(':id')
   @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Encontrar um usuário por ID' }) // Descrição da rota
   @ApiResponse({ status: 200, description: 'Usuário encontrado' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
+ 
+  @Get(':email')
+  @ApiOperation({ summary: 'Obter detalhes de um Cliente' })
+  @ApiResponse({ status: 200, description: 'Detalhes do Cliente' })
+  async getClienteById(@Param('email') email: string)  {
+    return await this.userService.findOne(email);
+  }
 
-    
+
   @Post()
   @ApiOperation({
     summary: 'Criar um novo usuário',
@@ -64,6 +86,7 @@ export class UserController {
         summary: 'Exemplo de usuário normal',
         value: {
           name: 'John Doe',
+          email: 'email@teste.com',
           cpf: '283.252.254-79',
           password: 'password123',
           role: 'cliente'

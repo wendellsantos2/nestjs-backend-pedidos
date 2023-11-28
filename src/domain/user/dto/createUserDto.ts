@@ -6,7 +6,10 @@ export class CreateUserDto {
   name: string;
 
   @IsString()
-  cpf: string;
+  email: string;
+
+  @IsString()
+  cpfCnpj: string;
 
   @IsString()
   password: string;
