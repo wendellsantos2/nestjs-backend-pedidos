@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Produto } from '../../entities/produto.entity';
@@ -13,23 +13,50 @@ export class ProdutoService {
   async findAll(): Promise<Produto[]> {
     return this.produtoRepository.find();
   }
+  
+  async findOne(id: number): Promise<Produto> {
+    const produto = await this.produtoRepository.findOne({ 
+      where: { id_produto: id }
+    });
 
-  async findOne(id: string): Promise<Produto> {
-    return this.produtoRepository.findOne(id as any);
+    if (!produto) {
+      throw new NotFoundException(`Produto with ID "${id}" not found`);
+    }
+    return produto;
   }
+  async remove(id: number): Promise<void> {
+    const existingProduto = await this.produtoRepository.findOne({
+      where: { id_produto: id }
+    });
 
+    if (!existingProduto) {
+      throw new NotFoundException(`Produto with ID "${id}" not found`);
+    }
+
+    await this.produtoRepository.delete({ id_produto: id });
+  }
   async create(produto: Produto): Promise<Produto> {
     return this.produtoRepository.save(produto);
   }
 
-  async update(id: string, produtoData: Partial<Produto>): Promise<Produto> {
-    await this.produtoRepository.update(id, produtoData);
-    return this.produtoRepository.findOne(id as any);
+  async update(id: number, produtoData: Partial<Produto>): Promise<Produto> {
+    const existingProduto = await this.produtoRepository.findOne({
+      where: { id_produto: id }
+    });
+
+    if (!existingProduto) {
+      throw new NotFoundException(`Produto with ID "${id}" not found`);
+    }
+
+    await this.produtoRepository.update({ id_produto: id }, produtoData);
+
+    // Retrieve the updated Produto
+    return this.produtoRepository.findOne({
+      where: { id_produto: id }
+    });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.produtoRepository.delete(id);
-  }
+
 
   // Add more methods as needed
 }
