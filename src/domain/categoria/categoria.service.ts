@@ -1,50 +1,55 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { Categoria } from 'src/entities/categoria.entity';
 import { CreateCategoriaDto } from './dto/createCategoriaDto';
 import { UpdateCategoriaDto } from './dto/UpdateCategoriaDto';
-// Import any additional libraries or modules as needed
 
 @Injectable()
 export class CategoriaService {
-  // Assuming you have some form of data storage, like a database
+  constructor(
+    @InjectRepository(Categoria)
+    private categoriaRepository: Repository<Categoria>,
+  ) {}
 
   async create(createCategoriaDto: CreateCategoriaDto): Promise<Categoria> {
-    // Logic to create a new categoria
-    // For example, save createCategoriaDto to your database
-    return new Categoria(); // Replace with the created category entity
+    const categoria = this.categoriaRepository.create(createCategoriaDto);
+    await this.categoriaRepository.save(categoria);
+    return categoria;
   }
 
   async findAll(): Promise<Categoria[]> {
-    // Logic to retrieve all categorias
-    // For example, fetch all categories from your database
-    return []; // Replace with the actual list of categories
+    return await this.categoriaRepository.find();
   }
 
-  async findOne(id: string): Promise<Categoria> {
-    // Logic to find a single categoria by its id
-    // For example, find the category in your database
-    const categoria = new Categoria(); // Replace with actual logic
+ async findOne(id_categoria: string): Promise<Categoria> {
+    // Use findOne with FindOneOptions
+    const categoria = await this.categoriaRepository.findOne({ where: { id_categoria } });
+
     if (!categoria) {
-      throw new NotFoundException(`Categoria with ID "${id}" not found`);
+      throw new NotFoundException(`Categoria with ID "${id_categoria}" not found`);
     }
     return categoria;
   }
 
   async update(id: string, updateCategoriaDto: UpdateCategoriaDto): Promise<Categoria> {
-    // Logic to update a categoria
-    // For example, update the category in your database
-    const updatedCategoria = new Categoria(); // Replace with actual logic
-    if (!updatedCategoria) {
+    const categoria = await this.findOne(id); // Reutiliza o método findOne para verificar se a categoria existe
+    if (!categoria) {
       throw new NotFoundException(`Categoria with ID "${id}" not found`);
     }
-    return updatedCategoria;
+
+    // Atualiza a categoria com os novos dados
+    this.categoriaRepository.merge(categoria, updateCategoriaDto);
+    await this.categoriaRepository.save(categoria);
+
+    return categoria;
   }
 
   async remove(id: string): Promise<void> {
-    // Logic to delete a categoria
-    // For example, delete the category from your database
-    // Throw an exception if the category is not found
-    throw new NotFoundException(`Categoria with ID "${id}" not found`);
+    const result = await this.categoriaRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Categoria with ID "${id}" not found`);
+    }
   }
 }

@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CategoriaService } from 'src/domain/categoria/categoria.service';
 import { CreateCategoriaDto } from './dto/createCategoriaDto';
 import { UpdateCategoriaDto } from './dto/UpdateCategoriaDto';
+import { Categoria } from 'src/entities/categoria.entity';
 
 @ApiTags('categoria')
 @Controller('categoria')
@@ -13,17 +14,35 @@ export class CategoriaController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Criar nova categoria' })
-  @ApiBody({ type: CreateCategoriaDto })
-  @ApiResponse({ status: 201, description: 'Categoria criada com sucesso' })
-  async createCategoria(@Body() createCategoriaDto: CreateCategoriaDto) {
-    return await this.categoriaService.create(createCategoriaDto);
+ 
+  @ApiOperation({
+    summary: 'Criar uma nova categoria',
+    description: 'Cria uma nova categoria no sistema. É necessário fornecer detalhes da categoria como nome, descricao'
+  })
+  @ApiBody({
+    description: 'Dados para a criação de uma nova categoria',
+    type: CreateCategoriaDto,
+    examples: {
+      normalUser: {
+        summary: 'Nome da Categoria ',
+        value: {
+          nome_categoria: 'Arroz',
+          descricao: '20 kg',
+        }
+      },
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Dados inválidos. Por favor, verifique os dados fornecidos.' })
+   @ApiResponse({ status: 201, description: 'Categoria criada com sucesso' })
+   async createCategoria(@Body() createCategoriaDto: CreateCategoriaDto): Promise<Categoria> {
+    const createdCategoria = await this.categoriaService.create(createCategoriaDto);
+    return createdCategoria;
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar categorias' })
-  @ApiResponse({ status: 200, description: 'Lista de categorias' })
-  async getCategorias() {
+  @ApiOperation({ summary: 'Listar todas as categorias' })
+  @ApiResponse({ status: 200, description: 'Retorna a lista de categorias', type: Categoria, isArray: true })
+  async getCategorias(): Promise<Categoria[]> {
     return await this.categoriaService.findAll();
   }
 
