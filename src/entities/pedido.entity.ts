@@ -10,6 +10,7 @@ import { Pagamento } from './pagamento.entity';
 
 @Entity('PEDIDO')
 export class Pedido {
+
   @PrimaryGeneratedColumn()
   id_pedido: number;
 
