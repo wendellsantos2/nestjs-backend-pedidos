@@ -17,9 +17,10 @@ import { PagamentoModule } from './domain/pagamento/pagamento.module';
 import { PedidoModule } from './domain/pedido/pedido.module';
 import { ProdutoModule } from './domain/produto/produto.module';
 import { RolesModule } from './domain/roles/roles.module';
+import { AvaliacoesModule } from './domain/avaliacoes/avaliacoes.module';
 
 @Module({
-  imports: [UserModule,  CategoriaModule,
+  imports: [UserModule,  CategoriaModule,AvaliacoesModule,
     ProdutoModule,
     RolesModule,
     PedidoModule,

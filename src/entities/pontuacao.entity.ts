@@ -15,7 +15,7 @@ export class Pontuacao {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   data_compra: Date;
 
-  // If you want to access the cliente_id foreign key directly, you can also add:
+  
   @Column()
-  cliente_id: number; // This will represent the foreign key column in the table
+  usuario_id : number; // This will represent the foreign key column in the table
 }
